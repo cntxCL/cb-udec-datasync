@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Data.OleDb;
-using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -28,19 +27,20 @@ namespace PreServicio
             List<Dictionary<string,string>> valores = new List<Dictionary<string,string>>();
             Access adb = new Access(connString);
             try {
-               if (!string.IsNullOrEmpty((json = adb.usuarios(""))))
+               string ultimo = getUltimo();
+               if (!string.IsNullOrEmpty((json = adb.usuarios(ultimo))))
                {
                    post(add, json);
                }
-               if (!string.IsNullOrEmpty((json = adb.check(""))))
+               /*if (!string.IsNullOrEmpty((json = adb.check(""))))
                {
                    post(check, json);
-               }
-               if (!string.IsNullOrEmpty((json = adb.del(""))))
+               }*/
+               if (!string.IsNullOrEmpty((json = adb.del(ultimo))))
                {
                    post(del, json);
                }
-                
+               adb.insertAhora();                
                     
             }catch(Exception e){
                 Console.WriteLine(e.ToString());
@@ -64,11 +64,24 @@ namespace PreServicio
             using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
             {
                 var result = streamReader.ReadToEnd();
-
                 //Console.WriteLine(result);
             }
-
-
         }
+
+
+        public static string getUltimo()
+        {
+            string ultimo = "'01/01/2000 00:00:00'";
+            try
+            {
+                string text = System.IO.File.ReadAllText("last.txt");
+                return text;
+            }
+            catch (Exception e)
+            {
+            }
+            return ultimo;
+        }
+
     }
 }
