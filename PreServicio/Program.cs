@@ -15,7 +15,6 @@ namespace PreServicio
     class Program
     {
         private static string db;
-        private static string connString;
         private static string add = ConfigurationManager.AppSettings["add"].ToString();
         private static string del = ConfigurationManager.AppSettings["del"].ToString();
         private static string check = ConfigurationManager.AppSettings["check"].ToString();
@@ -23,9 +22,8 @@ namespace PreServicio
         static void Main(string[] args)
         {
             db = ConfigurationManager.AppSettings["database"].ToString();
-            connString = string.Format(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0}",db);
             List<Dictionary<string,string>> valores = new List<Dictionary<string,string>>();
-            Access adb = new Access(connString);
+            Access adb = new Access(db);
             try {
                string ultimo = getUltimo();
                if (!string.IsNullOrEmpty((json = adb.usuarios(ultimo))))
