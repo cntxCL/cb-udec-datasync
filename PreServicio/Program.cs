@@ -31,16 +31,19 @@ namespace PreServicio
                if (!string.IsNullOrEmpty((json = adb.usuarios(ultimo))))
                {
                    post(add, json);
+                   adb.insertAhora();
                }
                /*if (!string.IsNullOrEmpty((json = adb.check(""))))
                {
                    post(check, json);
+                   adb.insertAhora(); 
                }*/
                if (!string.IsNullOrEmpty((json = adb.del(ultimo))))
                {
                    post(del, json);
+                   adb.insertAhora();
                }
-               adb.insertAhora();                
+                               
                     
             }catch(Exception e){
                 Console.WriteLine(e.ToString());

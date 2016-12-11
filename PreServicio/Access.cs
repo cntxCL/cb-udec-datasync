@@ -49,6 +49,8 @@ namespace PreServicio
                     });
                 }
                 JavaScriptSerializer js = new JavaScriptSerializer();
+                if (valores.Count == 0)
+                    return "";
                 string json = js.Serialize(valores);
                 return json;
             }
@@ -73,6 +75,8 @@ namespace PreServicio
                         {"checktype", reader[2].ToString()}
                     });
                 }
+                if (valores.Count == 0)
+                    return "";
                 JavaScriptSerializer js = new JavaScriptSerializer();
                 string json = js.Serialize(valores);
                 return json;
@@ -96,6 +100,8 @@ namespace PreServicio
                         {"reloj_id", reader[0].ToString()}
                     });
                 }
+                if (valores.Count == 0)
+                    return "";
                 JavaScriptSerializer js = new JavaScriptSerializer();
                 string json = js.Serialize(valores);
                 return json;
