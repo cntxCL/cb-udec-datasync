@@ -60,30 +60,38 @@ namespace PreServicio
             }
         }
 
-        public string check(string last)
+        public List<string> check(string last)
         {
             List<Dictionary<string, string>> valores = new List<Dictionary<string, string>>();
             try
             {
-                var reader = query("SELECT USERID, CHECKTIME, CHECKTYPE from CHECKINOUT");
+                string sub = string.Format("SELECT USERID, CHECKTIME, CHECKTYPE from CHECKINOUT WHERE CHECKTIME> CDATE({0}) order by CHECKTIME ASC", last);
+                var reader = query(sub);
+                List<string> lista = new List<string>();
+                string json = "";
                 while (reader.Read())
                 {
-                    valores.Add(new Dictionary<string, string>
+                    for (int i = 0; i < 1000 && reader.Read(); i++)
                     {
-                        {"reloj_id", reader[0].ToString()},
-                        {"checktime", reader[1].ToString()},
-                        {"checktype", reader[2].ToString()}
-                    });
+                        valores.Add(new Dictionary<string, string>
+                        {
+                            {"reloj_id", reader[0].ToString()},
+                            {"checktime", reader[1].ToString()},
+                            {"checktype", reader[2].ToString()}
+                        });
+                    }
+                    JavaScriptSerializer js = new JavaScriptSerializer();
+                    json = js.Serialize(valores);
+                    lista.Add(json);
+                    valores = new List<Dictionary<string, string>>();
                 }
-                if (valores.Count == 0)
-                    return "";
-                JavaScriptSerializer js = new JavaScriptSerializer();
-                string json = js.Serialize(valores);
-                return json;
+                if (lista.Count == 0)
+                    return null;
+                return lista;
             }
             catch (Exception e) {
                 Console.WriteLine(e.ToString());
-                return "";
+                return null;
             }
         }
 

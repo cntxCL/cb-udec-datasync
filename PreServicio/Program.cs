@@ -19,6 +19,7 @@ namespace PreServicio
         private static string del = ConfigurationManager.AppSettings["del"].ToString();
         private static string check = ConfigurationManager.AppSettings["check"].ToString();
         private static string json;
+        private static List<string> jSON;
         static void Main(string[] args)
         {
             db = ConfigurationManager.AppSettings["database"].ToString();
@@ -31,11 +32,11 @@ namespace PreServicio
                    post(add, json);
                    adb.insertAhora();
                }
-               /*if (!string.IsNullOrEmpty((json = adb.check(""))))
-               {
-                   post(check, json);
+               if ((jSON = adb.check(ultimo)) != null) { 
+                    foreach(string dato in jSON)
+                        post(check, dato);
                    adb.insertAhora(); 
-               }*/
+               }
                if (!string.IsNullOrEmpty((json = adb.del(ultimo))))
                {
                    post(del, json);
@@ -50,22 +51,28 @@ namespace PreServicio
         }
 
         public static void post(string url, string json){
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
-            httpWebRequest.ContentType = "application/json";
-            httpWebRequest.Method = "POST";
-
-            using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+            try
             {
-                streamWriter.Write(json);
-                streamWriter.Flush();
-                streamWriter.Close();
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+                httpWebRequest.ContentType = "application/json";
+                httpWebRequest.Method = "POST";
+
+                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                {
+                    streamWriter.Write(json);
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                }
+
+                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    var result = streamReader.ReadToEnd();
+                    //Console.WriteLine(result);
+                }
             }
-
-            var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-            {
-                var result = streamReader.ReadToEnd();
-                //Console.WriteLine(result);
+            catch (Exception e) {
+                Console.WriteLine(e.ToString());
             }
         }
 
